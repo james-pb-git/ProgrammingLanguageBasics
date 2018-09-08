@@ -6,6 +6,7 @@
 | conda env list | show the list of all existing virtual environments |
 | conda create --name *EnvName* | create new venv with name *EnvName* |
 | source activate *EnvName* | activate env *EnvName* to use it |
+| source deactivate *EnvName* | exit current virtual env. |
 | conda list | show the list all packages (and version) installed in the active env. |
 | conda install *PackageName* | install package *PackageName* |
 
