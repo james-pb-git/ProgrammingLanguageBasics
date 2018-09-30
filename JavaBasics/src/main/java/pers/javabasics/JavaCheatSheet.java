@@ -1,4 +1,4 @@
-package main.java.pers.javabasics;
+package pers.javabasics;
 
 /**
  * Created by bopang on 9/30/18.
