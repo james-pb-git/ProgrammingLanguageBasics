@@ -60,9 +60,11 @@ list.removeFirst();
 
 ### Heap / Priority Queue
 
+See more in [Comparators](#comparators).
+
 ```
 // First argument: (initial) capacity, will be automatically adjusted
-// Second argument: custom comparator ( See: [Comparators](#comparators))
+// Second argument: custom comparator)
 PriorityQueue<String> myHeap = new PriorityQueue<>(10, myComparator);
 
 String topItem = myHeap.peek(); // return but not remove. CAN BE NULL!
