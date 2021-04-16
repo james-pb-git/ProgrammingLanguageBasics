@@ -1,4 +1,4 @@
-package pers.javabasics;
+package pers.programming.java.archived;
 
 /**
  * Created by bopang on 2019-05-10.

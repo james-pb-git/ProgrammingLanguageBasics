@@ -1,4 +1,4 @@
-package pers.javabasics;
+package pers.programming.java.archived;
 import java.util.*;
 /**
  * Created by bopang on 2019-05-15.
@@ -23,8 +23,11 @@ public class CommonOperations {
         for (int idx = 0; idx < a.length; idx ++) {
             b[idx] = a[idx];
         }
+        ArrayList<Integer> d = new ArrayList<Integer>();
+        d.add(1); d.add(2); d.add(-3);
+        Collections.sort(d, new myComparator());
         Arrays.sort(b, new myComparator());
-        System.out.println(Arrays.toString(b));
+        System.out.println(d.toString());
 
         int[][] c = new int[][]{{1,2},{0,3}};
         Arrays.sort(c, new arrayComparator());
