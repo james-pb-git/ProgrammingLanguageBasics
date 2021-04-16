@@ -2,13 +2,13 @@
 
 ## Variables
 
-```
+```java
 int a = Integer.MIN_VALUE;
 ```
 
 ## String Operations
 
-```
+```java
 // Creation
 String str = new String("Hello world");
 String str = "Hello World!";
@@ -26,7 +26,7 @@ for (char ch : str.toCharArray()) {// process ch}
 
 ## Arrays
 
-```
+```java
 // Initialization
 int[] a = new int[5]; // Both "int a[]" or "int[] a" works
 int[] a = new int[]{1,2,3,5,7};
@@ -43,7 +43,7 @@ Arrays.fill(a, -1);
 
 ### LinkedList
 
-```
+```java
 // Initialization: declare it to be LinkedList (not List) so methods available
 // in LinkedList (instead of List interface) can be utilized, e.g. getFirst().
 
@@ -62,7 +62,7 @@ list.removeFirst();
 
 See more in [Comparators](#comparators).
 
-```
+```java
 // First argument: (initial) capacity, will be automatically adjusted
 // Second argument: custom comparator)
 PriorityQueue<String> myHeap = new PriorityQueue<>(10, myComparator);
@@ -87,7 +87,7 @@ if (!myHeap.isEmpty()) {top = myHeap.peek();} // won't be null.
 ## Set
 
 ### Initialization
-```
+```java
 Set<Integer> intSet = new HashSet<>();
 Set<Character> vowels = new HashSet<>(Arrays.asList('a', 'e', 'i', 'o', 'u'));
 
@@ -101,7 +101,7 @@ Set<String> strSet = ImmutableSet.of("a", "b", "c");
 
 ### Other Operations
 
-```
+```java
 for (int value: intSet) {// process value;}
 ```
 
@@ -113,7 +113,7 @@ for (int value: intSet) {// process value;}
 
 Java util library doesn’t have a class of Pair. But it can be imported from some 3rd party libraries, e.g:
 
-```
+```java
 import javafx.util.Pair;
 
 // This pair is immutable
@@ -124,7 +124,7 @@ System.out.println(pair.getValue());
 
 Or: use implementation of Map.Entry:
 
-```
+```java
 // AbstractMap is an abstract class, but AbstractMap.SimpleEntry is
 // its nested concrete static class, so can be instantiated.
 Map.Entry<Integer, String> pair = AbstractMap.SimpleEntry<>(1, "abc");
@@ -135,14 +135,14 @@ pair.setValue("dec"); // cannot reset key.
 
 If the key and the value are of the same type, an easier way is to just use array:
 
-```
+```java
 int[] pair = new int[]{k, v};
 Set<int[]> mySet = new HashSet<>(Arrays.asList(pair));
 ```
 
 ### Comparators
 
-```
+```java
 public class KeyComparator implements Comparator<Map.Entry<Integer, Integer>> {
 
     @Override
