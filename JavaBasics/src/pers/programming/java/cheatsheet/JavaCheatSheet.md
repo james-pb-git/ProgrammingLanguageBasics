@@ -1,6 +1,6 @@
 # JAVA CHEATSHEET
 
-## Variables
+## Variables and Basics
 
 ```java
 int a = Integer.MIN_VALUE; // Integer.MIN_VALUE is static int variable, not Integer.
@@ -12,6 +12,31 @@ Integer.MIN_VALUE - 1 == Integer.MAX_VALUE
 ```
 See more explanations [here](https://softwareengineering.stackexchange.com/questions/348172/in-java-why-does-integer-min-value-integer-min-value).
 
+The "Class" Class
+```java
+// Object.getClass(). Do NOT apply to primitive types.
+List<Integer> list = new ArrayList<>();
+Class c1 = list.getClass();
+System.out.println(c1.getName()); // "java.util.ArrayList"
+// Class c11 = int.getClass(); // Compile-time Error!
+
+// type.class
+Class c2 = int[].class;
+System.out.println(c2.getName()); // "[I"
+System.out.println(c2.getTypeName()); "int[]"
+
+Class c3 = Character.class;
+System.out.println(c3.getName()); // java.lang.Character
+System.out.println(c3.getSuperclass().getName()); // java.lang.Object
+
+// is instance of
+Integer i = 1;
+Character ch = 'a';
+boolean b1 = Number.class.isInstance(ch); // false
+boolean b2 = Number.class.isInstance(i); // true
+// boolean b3 = ch instanceof Number; // runtime exception (incompatible types)
+boolean b4 = i instanceof Number; // true
+```
 ---
 
 ## String Operations
@@ -57,7 +82,7 @@ Notes: Read [this](https://stackoverflow.com/questions/12752274/java-indexofstri
 ### Split a String
 
 > str.split(regex) yeilds the same result as Pattern.compile(regex).split(str, 0).
-> See [this](https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html#quote-java.lang.String-) about Patterns.
+> See [this](https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html) about Patterns.
 
 ```java
 String[] parts;
@@ -66,6 +91,11 @@ String[] parts;
 String str = "foo:and:boo";
 parts = str.split(":"); // {"foo", "and", "boo"}
 parts = str.split("o"); // {"f", "", ":and:b"}, the trailing empty strings are discarded!
+
+// Multiple delimiters
+String s = "a:-b:c-d";
+String[] parts = s.split("[:-]+"); // {"a", "b", "c", "d"}, "+" treats consecutive delimiters as one.
+String[] parts = s.split("[:-]"); // {"a", "", "b", "c", "d"}
 
 // Special Characters
 parts = str.split("\\t"); // split by tab, represented as "\t";
@@ -120,14 +150,77 @@ int[] a = new int[5]; // Both "int a[]" or "int[] a" works
 int[] a = new int[]{1,2,3,5,7};
 int[] a = {1,3,5,7,9};
 
+int[][] b = new int[3][2]; // or int[3][];
+int[][] b = new int[][]{{1,2}, {3,4}, {5,6}};
+int[][] b = {{1,2}, {3,4}, {5,6}};
+
 // Init with a value other than the default value (0 for integers).
 int[] a = new int[10];
 Arrays.fill(a, -1);
+Arrays.fill(a, 0, 4, -1); // fills a[0 .. 3] with -1.
+
+// Visualization
+System.out.println(a); // prints something like "[I@6d06d69c";
+System.out.println(Arrays.toString(a)); // prints "[1, 3, 5, 7, 9]"
 ```
+### Sorting
+See more in [Comparators](#comparators).
+
+
+```java
+Arrays.sort(a);
+Arrays.sort(a, 0, 4); // sorts a[0 .. 3].
+
+// Comparator<Integer> cannot be applied to compare int variables.
+Integer[] boxed = Arrays.stream(a).boxed().toArray(Integer[]::new);
+Arrays.sort(boxed, new IntegerComparator());
+Arrays.sort(boxed, Collections.reverseOrder());
+
+// Sort 2D arrays
+int[][] arr = {{5,2},{3,6},{3,4}};
+Arrays.sort(arr, (a, b) -> (a[0] - b[0])); // Lambda expression
+Arrays.sort(arr, (a, b) -> {return a[0] - b[0];}); // Lambda expression using code block
+Arrays.sort(arr, (a, b) -> Integer.compare(a[0], b[0]));
+Arrays.sort(arr, Comparator.comparingInt(a -> a[0])); // define key extractor
+
+// The compiler is not able to infer the generic type parameters when adding thenComparing
+// Below are two ways to explicitly specify the type.
+Arrays.sort(arr, Comparator.<int[]>comparingInt(a -> a[0]).thenComparing(b -> b[0]));
+Arrays.sort(arr, Comparator.comparingInt((int[] a) -> a[0]).thenComparing(b -> b[0]));
+
+Arrays.sort(arr, Comparator.comparingInt((int[] a) -> a[0]).reversed());
+```
+
+### Conversion
+```java
+int[] a = {1,2,3,4,5};
+
+// Array with primitive types to boxed array: (Java8)
+Integer[] boxed = Arrays.stream(a).boxed().toArray(Integer[]::new); // or:
+Integer[] boxed = IntStream.of(a).boxed().toArray(Integer[]::new); // java.util.stream.IntStream
+
+// Array with primitive types to boxed list (java.util.ArrayList)
+List<Integer> list = Arrays.stream(a).boxed().collect(Collectors.toList()); // or:
+List<Integer> list = IntStream.of(a).boxed().collect(Collectors.toList());
+
+// Using Arrays.asList
+Integer[] boxed = Arrays.stream(a).boxed().toArray(Integer[]::new);
+List<Integer> list = Arrays.asList(boxed);
+```
+
+**Side notes**
+- Arrays.asList takes a parameter of T... array, where T cannot be primitive.
+- Arrays.asList returns java.util.Arrays$ArrayList which is a nested class under Arrays,
+and it's a fixed-sized IMMUTABLE list unlike java.util.ArrayList. ([Ref](https://mkyong.com/java/what-is-java-util-arraysarraylist/))
 
 ---
 
 ## Lists
+
+### ArrayList
+```java
+lkjl
+```
 
 ### LinkedList
 
