@@ -12,7 +12,70 @@ Integer.MIN_VALUE - 1 == Integer.MAX_VALUE
 ```
 See more explanations [here](https://softwareengineering.stackexchange.com/questions/348172/in-java-why-does-integer-min-value-integer-min-value).
 
-The "Class" Class
+"%" operator returns the remainder in Java unlike Python in which it returns modulus.
+```java
+// Java: a % b = a - roundTowardsZero(a/b) * b
+// a % b < 0 if a < 0
+
+3 % 2 == 1 // 3 - (3/2) * 2 = 1
+(-3) % 2 == -1 // (-3) - (-3/2) * 2 = -1, -3/2 = -1 in Java.
+3 % (-2) == 1 // 3 - (3/(-2)) * (-2) = 1
+(-3) % (-2) == -1 // (-3) - ((-3)/(-2)) * (-2) = -1
+
+Math.floorMod(a, b) // returns modulus as in Python.
+```
+
+```Python
+# Python: a % b = a - floor(a/b) * b
+# a % b < 0 if b < 0
+3 % 2 == 1 # floor(3/2) = 1, 3 - 2 * 1 = 1
+(-3) % 2 == 1 # (-3) - floor(-3/2) * 2 = 1, floor(-3/2) = -2
+3 % (-2) == -1 # 3 - floor(3/(-2)) * (-2) = -1
+(-3) % (-2) == -1 # (-3) - floor((-3)/(-2)) * (-2) = -1
+```
+References: [this](https://stackoverflow.com/a/5385053) and [this](https://stackoverflow.com/a/25830153).
+
+```java
+// Round up
+int n = a / b + ((a % b == 0) ? 0 : 1); // Recommended
+int n = (int) Math.ceil((double) a / b)); // NOT recommended, because of precision loss in double division
+```
+
+### Conversion between numbers
+```java
+// int and char
+int i = 3;
+char ch1 = (char) (i + '0'); // char '3'
+char ch1 = (char) i; // char represented by ASCII Code 3
+
+char ch2 = '3';
+int j = ch2 - '0'; // 3
+int j = ch2; // 51, ASCII Code representing '3'
+
+// Numbers
+int i = 3;
+Integer myInt = i;
+int j = myInt;
+
+char ch = (char) i;
+double d = i;
+
+Character myChar = (char) i;
+Double myVal = (double) i;
+
+Character myChar = (char) (int) myInt;
+Double myVal = (double) (int) myInt;
+
+// Numbers and Strings
+String str = i + ""; // Or: myInt + ""
+String str = String.valueOf(i); // Or: String.valueOf(myInt);
+String str = myInt.toString();
+
+Integer.parseInt(str); // This is an int variable.
+Integer.valueOf(str); // This is an Integer.
+```
+
+### The "Class" Class
 ```java
 // Object.getClass(). Do NOT apply to primitive types.
 List<Integer> list = new ArrayList<>();
@@ -153,6 +216,7 @@ int[] a = {1,3,5,7,9};
 int[][] b = new int[3][2]; // or int[3][];
 int[][] b = new int[][]{{1,2}, {3,4}, {5,6}};
 int[][] b = {{1,2}, {3,4}, {5,6}};
+int[][] b = new int[3][]; b[0] = new int[4]; b[1] = {1,2}; // ...
 
 // Init with a value other than the default value (0 for integers).
 int[] a = new int[10];
@@ -219,7 +283,20 @@ and it's a fixed-sized IMMUTABLE list unlike java.util.ArrayList. ([Ref](https:/
 
 ### ArrayList
 ```java
-lkjl
+// Initialization
+List<Integer> list = new ArrayList<>();
+List<Integer> list = new ArrayList<>(Arrays.asList(1, 2));
+
+// Visualization
+System.out.println(list.toString()); // "[1, 2]"
+
+// A list of List
+List<List<Integer>> lists = new ArrayList<>();
+List<Integer> curList;
+for (int i = 0; i < 10; i ++) {
+  curList = createList();
+  lists.add(new ArrayList<Integer>(curList)); // This creates a copy of curList instead of its reference.
+}
 ```
 
 ### LinkedList
@@ -273,7 +350,7 @@ Set<Integer> intSet = new HashSet<>();
 Set<Character> vowels = new HashSet<>(Arrays.asList('a', 'e', 'i', 'o', 'u'));
 
 // In Java 8:
-Set<String> strSet = Stream.of("a", "b", "c")
+Set<String> strSet = Stream.of("a", "b", "c") // Interface: java.util.stream
   .collect(Collectors.toCollection(HashSet::new));
 
 // Using Guava (https://github.com/google/guava):
@@ -284,6 +361,22 @@ Set<String> strSet = ImmutableSet.of("a", "b", "c");
 
 ```java
 for (int value: intSet) {// process value;}
+```
+
+---
+
+## Map
+
+```java
+// Counter
+Map<String, Integer> counter = new HashMap<>();
+for (String str: stringArray) {
+  counter.put(str, counter.getOrDefault(str, 0) + 1);
+}
+
+for (String key : counter.keySet()) {
+  System.out.println(key + " " + counter.get(key));
+}
 ```
 
 ---
@@ -337,5 +430,5 @@ public class KeyComparator implements Comparator<Map.Entry<Integer, Integer>> {
 people.sort((p1, p2) -> (p1.getName().compareTo(p2.getName())));
 ```
 
-## Refection
+## Reflection
 https://stackoverflow.com/questions/8894258/fastest-way-to-iterate-over-all-the-chars-in-a-string
