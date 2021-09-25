@@ -111,6 +111,12 @@ boolean b4 = i instanceof Number; // true
 String str = new String("Hello world");
 String str = "Hello World!";
 
+// Escape sequences: \\, \', \", \n, \b, \r, \t, \f
+char ch = '\"';
+String str = "\'"; // str.length() == 1
+// "\", "'", """, '\', '"', ''' ---> It won't compile wihtout escaping.
+// "\.", "\[", "\e" ---> Won't compile because of illegal escaping.
+
 // Traversal
 // toCharArray returns a char[], not Character[] or a List.
 for (char ch : str.toCharArray()) {/*process ch*/}
@@ -218,6 +224,11 @@ int[][] b = new int[][]{{1,2}, {3,4}, {5,6}};
 int[][] b = {{1,2}, {3,4}, {5,6}};
 int[][] b = new int[3][]; b[0] = new int[4]; b[1] = {1,2}; // ...
 
+Integer[] arr = new Integer[10]; // arr of objects
+//  List<Integer>[] arr = new ArrayList<Integer>[4]; // Won't compile!
+List<Integer>[] arr = new ArrayList[10]; // array of Lists (NOT recommended)
+List<List<Integer>> list = new ArrayList(); // Recommended: create list of lists
+
 // Init with a value other than the default value (0 for integers).
 int[] a = new int[10];
 Arrays.fill(a, -1);
@@ -269,26 +280,66 @@ List<Integer> list = IntStream.of(a).boxed().collect(Collectors.toList());
 
 // Using Arrays.asList
 Integer[] boxed = Arrays.stream(a).boxed().toArray(Integer[]::new);
-List<Integer> list = Arrays.asList(boxed);
+List<Integer> list = Arrays.asList(boxed); // Fixed-sized Arrays$arraysarraylist
+// list.add(2); list.remove(2); // This would throw UnsupportedOperationException!
+List<Integer> list = new ArrayList(Arrays.asList(boxed)); // Better
 ```
 
 **Side notes**
 - Arrays.asList takes a parameter of T... array, where T cannot be primitive.
 - Arrays.asList returns java.util.Arrays$ArrayList which is a nested class under Arrays,
-and it's a fixed-sized IMMUTABLE list unlike java.util.ArrayList. ([Ref](https://mkyong.com/java/what-is-java-util-arraysarraylist/))
+and it's a fixed-sized list unlike java.util.ArrayList. ([Ref](https://mkyong.com/java/what-is-java-util-arraysarraylist/))
 
 ---
 
-## Lists
+## Collection
+![Diagram](https://static.javatpoint.com/images/java-collection-hierarchy.png)
 
-### ArrayList
+Note: Collection is an Interface, while Collections is a class providing static methods.
+
+### Interfaces
+
+- List: add(ele), add(idx, ele), get(idx), indexOf(obj), isEmpty(), remove(idx), size(), set(idx, ele)
+
+- Queue:
+  - insert: offer(ele) vs add(ele) (throws exception due to capacity restrictions)
+  - remove: poll() vs remove() (throws exception when empty)
+  - get: peek() vs element() (throws exception when empty)
+
+- Deque (extends Queue)
+    - offerFirst(e), offerLast(e), pollFirst(), pollLast(), peekFirst(), peekLast()
+
+- Set: add(ele), contains(obj), remove(obj)
+
+
+```java
+// Any Collection
+Collection collection = myCollection; // Any implementation of Collection.
+collection.clear();
+boolean empty = collection.isEmpty();
+int size = collection.size();
+System.out.println(collection.toString()); // prints e.g., "[1, 2, 3]"
+Integer[] array = collection.toArray(new Integer[0]); // The specified array is used to determine return types.
+for (Integer ele : collection) { /* process element */ } // traversal
+
+// Lists
+List<String> list = myList; // Any implementation of List.
+Collections.reverse(list); // Reverse the list in place.
+Collections.fill(list, obj); // Use THE SAME OBJECT to replace all existing elements.
+Collections.sort(list);
+Collections.sort(list, Collections.reverseOrder());
+int position = list.indexOf(obj); // First occurrence of obj or -1.
+```
+
+### Implementations
+
+**ArrayList**
+
 ```java
 // Initialization
 List<Integer> list = new ArrayList<>();
 List<Integer> list = new ArrayList<>(Arrays.asList(1, 2));
-
-// Visualization
-System.out.println(list.toString()); // "[1, 2]"
+List<Integer> list = new ArrayList<>(collection); // any implementation of collection.
 
 // A list of List
 List<List<Integer>> lists = new ArrayList<>();
@@ -297,26 +348,23 @@ for (int i = 0; i < 10; i ++) {
   curList = createList();
   lists.add(new ArrayList<Integer>(curList)); // This creates a copy of curList instead of its reference.
 }
+
+// Convert to int[]
+int [] ints = list.stream().mapToInt(Integer::intValue).toArray();
 ```
 
-### LinkedList
+**ArrayDeque and LinkedList**
+
+ArrayDeque is a better implementation of Deque than LinkedList. ([Ref](https://stackoverflow.com/questions/6163166/why-is-arraydeque-better-than-linkedlist))
 
 ```java
-// Initialization: declare it to be LinkedList (not List) so methods available
-// in LinkedList (instead of List interface) can be utilized, e.g. getFirst().
-
-LinkedList<Integer> list = new LinkedList<>();
-if (!list.isEmpty()) {
-    System.out.println(list.getFirst());
-    System.out.println(list.getLast());
-}
-list.addFirst(2);
-list.addLast(3);
-list.removeLast();
-list.removeFirst();
+Deque<String> deque = new ArrayDeque();
+Deque<String> deque = new ArrayDeque(collection); // any implementation of collection.
+// Declare it to be Deque (not List) so methods like peekFirst() are available.
+Deque<String> deque = new LinkedList();
 ```
 
-### Heap / Priority Queue
+**Heap / Priority Queue**
 
 See more in [Comparators](#comparators).
 
@@ -326,27 +374,20 @@ See more in [Comparators](#comparators).
 PriorityQueue<String> myHeap = new PriorityQueue<>(10, myComparator);
 
 String topItem = myHeap.peek(); // return but not remove. CAN BE NULL!
-
-myHeap.add("Hello world");
 myHeap.offer("Hi world"); // same as myHeap.add()
 
 while (true) {
     String str = myHeap.poll(); // return and remove. CAN BE NULL!
     if (str == null) break;
-
     // process str
 }
 
 // To avoid null return value, an alternative way is to use .isEmpty()
 if (!myHeap.isEmpty()) {top = myHeap.peek();} // won't be null.
 ```
----
-
-## Set
-
-### Initialization
+**HashSet**
 ```java
-Set<Integer> intSet = new HashSet<>();
+Set<Character> set = new HashSet<>();
 Set<Character> vowels = new HashSet<>(Arrays.asList('a', 'e', 'i', 'o', 'u'));
 
 // In Java 8:
@@ -356,13 +397,6 @@ Set<String> strSet = Stream.of("a", "b", "c") // Interface: java.util.stream
 // Using Guava (https://github.com/google/guava):
 Set<String> strSet = ImmutableSet.of("a", "b", "c");
 ```
-
-### Other Operations
-
-```java
-for (int value: intSet) {// process value;}
-```
-
 ---
 
 ## Map
