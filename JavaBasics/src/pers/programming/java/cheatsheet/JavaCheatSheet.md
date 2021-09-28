@@ -114,7 +114,7 @@ String str = "Hello World!";
 // Escape sequences: \\, \', \", \n, \b, \r, \t, \f
 char ch = '\"';
 String str = "\'"; // str.length() == 1
-// "\", "'", """, '\', '"', ''' ---> It won't compile wihtout escaping.
+// "\", "'", """, '\', '"', ''' ---> Won't compile without escaping.
 // "\.", "\[", "\e" ---> Won't compile because of illegal escaping.
 
 // Traversal
@@ -396,22 +396,143 @@ Set<String> strSet = Stream.of("a", "b", "c") // Interface: java.util.stream
 
 // Using Guava (https://github.com/google/guava):
 Set<String> strSet = ImmutableSet.of("a", "b", "c");
+
+// Try to avoid using Set of arrays, because deduplication is based on reference not values.
+Set<int[]> mySet = new HashSet<>();
+mySet.add(new int[]{1,2,3});
+mySet.add(new int[]{1,2,3});
+System.out.println(mySet.size()); // Will print 2!
+```
+
+**Misc**
+```java
+Set<Integer> sortedSet = new TreeSet<>(myComparator);
+Set<Integer> sortedSet = new TreeSet<>((a, b) -> (b - a));
+// The time complexity of add(ele), contains(obj), remove(obj) is O(lgn).
+
+Set<Integer linkedSet = new LinkedHashSet<>();
+// Uses doubly-linkedlist to maintain insertion order.
+// Will iterate through elements in the order in which they were inserted.
+// The time complexity of add(ele), contains(obj), remove(obj) is O(1).
 ```
 ---
 
 ## Map
 
+![MapInterface](https://i2.wp.com/javaconceptoftheday.com/wp-content/uploads/2015/01/MapInterface.png)
+
+### Interfaces
+
+- Map
+    - clear(), containsKey(obj), get(obj), getOrDefault(obj, val), isEmpty(), size()
+    - entrySet(), keySet(), values()
+    - put(key, val), putIfAbsent(key, obj), remove(key)
+- SortedMap
+    - headMap(toKey), returns SortedMap with keys < toKey
+    - subMap(fromKey, toKey), returns SortedMap with fromKey <= keys < toKey
+    - tailMap(fromKey), returns Sortedmap with keys >= fromKey
+- NavigableMap
+    - firstEntry(), Map.Entry<K, V> with smallest key or null (for empty map)
+    - lowerEntry(givenKey), entry with max(key) s.t. key < givenKey, or null
+    - floorEntry(givenKey), entry with max(key) s.t. key <= givenKey, or null
+    - ceilingEntry(givenKey), entry with min(key) s.t. key >= givenKey, or null
+    - higherEntry(givenKey), entry with min(key) s.t. key > givenKey, or null
+    - lastEntry(), entry with greatest key or null (for empty map)
+
+### Implementations
+
+**HashMap**
+
 ```java
-// Counter
+// counter
 Map<String, Integer> counter = new HashMap<>();
 for (String str: stringArray) {
   counter.put(str, counter.getOrDefault(str, 0) + 1);
 }
 
+// traversal
 for (String key : counter.keySet()) {
   System.out.println(key + " " + counter.get(key));
 }
+for (Map.Entry<String, Integer> entry : counter.entrySet()) {
+  System.out.println(entry.geyKey() + " " + entry.getValue());
+}
+
+// Sort by key using arrayList
+List<String> sortedKeys = new ArrayList<>(counter.keySet());
+Collections.sort(sortedKeys, Collections.reverseOrder()); // Or:
+Collections.sort(sortedKeys, (s1, s2) -> (s1.length() - s2.length()));
+
+// Sort by key using Stream
+List<Map.Entry<String, Integer>> sortedByKey =
+    counter.entrySet().stream()
+           .sorted(Map.Entry.comparingByKey()) // Or:
+           .sorted((e1, e2) -> (e1.getKey().length() - e2.getKey().length()))
+           .collect(Collectors.toList());
+
+// Sort by value using arrayList
+List<Map.Entry<String, Integer>> sortedByValue = new ArrayList<>(counter.entrySet());
+Collections.sort(sortedByValue, (e1, e2) -> (e1.getValue() - e2.getValue()));
+
+// Sort by value using Stream
+List<Map.Entry<String, Integer>> sortedByValue =
+    counter.entrySet().stream()
+           .sorted(Map.Entry.comparingByValue()) // Or:
+           .sorted((e1, e2) -> (- e1.getValue() + e2.getValue()))
+           .collect(Collectors.toList());
+
+// Misc.
+Map<Integer, List<Integer>> myMap = new HashMap<>();
+if (!myMap.containsKey(idx)) {myMap.put(idx, new ArrayList<>());} // Can be replaced by:
+myMap.putIfAbsent(idx, new ArrayList<>());
+
+if (counter.get("A").equals(counter.get("B"))) { ... } // Use .equals (NOT ==) to compare Integers!
 ```
+
+**TreeMap and LinkedHashMap**
+```java
+// TreeMap is implemented based on Red-black Tree.
+// It takes O(lgn) for get(key), containsKey(key), remove(key) and put(key, val).
+NavigableMap<String, Integer> counter = new TreeMap<>((s1, s2) -> (s1.length() - s2.length()));
+counter.put("mls", 3);
+counter.put("ab", 4);
+counter.put("z", 2);
+
+for (String key : counter.keySet()) {System.out.println(key + " " + counter.get(key));}
+System.out.println(counter.floorKey("mn")); // Prints "ab".
+
+// LinkedHashMap maintains a doubly-linked list to define its iteration order (insertion order by default)
+// The time complexity of get(key), put(key, value), containsKey(key) etc. is still O(1)
+Map<Integer, Integer> map = new LinkedHashMap<>();
+
+/* Implementation of LRU Cache
+ * CAPACITY - capacity of the cache
+ * 0.75f - load factor of hashmap (will increase capacity internally when using > 0.75 storage)
+ * accessOrder = true (evict based on access order, not insertion order)
+ * Created anonymous subclass by overriding removeEldestEntry method.
+ */
+public class LRUCache {
+    private LinkedHashMap<Integer, Integer> map;
+    private final int CAPACITY;
+    public LRUCache(int capacity) {
+         CAPACITY = capacity;
+         map = new LinkedHashMap<Integer, Integer>(capacity, 0.75f, true){
+             protected boolean removeEldestEntry(Map.Entry eldest) {
+                 return size() > CAPACITY;
+             }
+         };
+    }
+    public int get(int key) {
+       return map.getOrDefault(key, -1);
+   }
+   public void set(int key, int value) {
+       map.put(key, value);
+   }
+ }
+
+```
+
+Reference: [LRU Implementation](https://leetcode.com/problems/lru-cache/discuss/45939/Laziest-implementation%3A-Java's-LinkedHashMap-takes-care-of-everything), [Anonymous subclass](https://software.danielwatrous.com/override-java-methods-on-instantiation/).
 
 ---
 
@@ -464,5 +585,5 @@ public class KeyComparator implements Comparator<Map.Entry<Integer, Integer>> {
 people.sort((p1, p2) -> (p1.getName().compareTo(p2.getName())));
 ```
 
-## Reflection
+### Reflection
 https://stackoverflow.com/questions/8894258/fastest-way-to-iterate-over-all-the-chars-in-a-string
