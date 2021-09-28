@@ -35,11 +35,21 @@ Math.floorMod(a, b) // returns modulus as in Python.
 ```
 References: [this](https://stackoverflow.com/a/5385053) and [this](https://stackoverflow.com/a/25830153).
 
+**Misc.**
 ```java
 // Round up
 int n = a / b + ((a % b == 0) ? 0 : 1); // Recommended
 int n = (int) Math.ceil((double) a / b)); // NOT recommended, because of precision loss in double division
+
+// Character types
+Character.isLetter(ch); // lower case, upper case letters etc.
+Character.isDigit(ch); // a number
+Character.isAlphabetic(ch); // is letter or number
+Character.isLowerCase(ch);
+Character.isUpperCase(ch);
 ```
+
+```java
 
 ### Conversion between numbers
 ```java
@@ -69,7 +79,10 @@ Double myVal = (double) (int) myInt;
 // Numbers and Strings
 String str = i + ""; // Or: myInt + ""
 String str = String.valueOf(i); // Or: String.valueOf(myInt);
+String str = String.valueOf(ch); // "3"
 String str = myInt.toString();
+String str = Character.toString(ch);
+
 
 Integer.parseInt(str); // This is an int variable.
 Integer.valueOf(str); // This is an Integer.
