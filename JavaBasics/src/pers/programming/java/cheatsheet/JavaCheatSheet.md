@@ -323,6 +323,11 @@ Note: Collection is an Interface, while Collections is a class providing static 
     - offerFirst(e), offerLast(e), pollFirst(), pollLast(), peekFirst(), peekLast()
 
 - Set: add(ele), contains(obj), remove(obj)
+- SortedSet:
+   - first(), last()
+   - headSet(toEle): a sortedSet view with elements < toEle
+   - subSet(fromEle, toEle): a sortedSet view with elements s.t. fromEle <= element < toEle
+   - tailSet(fromEle): a sortedSet view with elements >= fromEle
 
 
 ```java
@@ -422,6 +427,13 @@ System.out.println(mySet.size()); // Will print 2!
 Set<Integer> sortedSet = new TreeSet<>(myComparator);
 Set<Integer> sortedSet = new TreeSet<>((a, b) -> (b - a));
 // The time complexity of add(ele), contains(obj), remove(obj) is O(lgn).
+Integer min = sortedSet.pollFirst(); // could be null
+Integer max = sortedSet.pollLast(); // could be null
+Integer target = 3;
+sortedSet.lower(3); // greatest element s.t. ele < 3 (could be null)
+sortedSet.floor(3); // greatest element s.t. ele <= 3 (could be null)
+sortedSet.ceiling(3); // smallest element s.t. ele >= 3 (could be null)
+sortedSet.higher(3); // smallest element s.t. ele > 3 (could be null)
 
 Set<Integer linkedSet = new LinkedHashSet<>();
 // Uses doubly-linkedlist to maintain insertion order.
