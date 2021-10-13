@@ -49,8 +49,6 @@ Character.isLowerCase(ch);
 Character.isUpperCase(ch);
 ```
 
-```java
-
 ### Conversion between numbers
 ```java
 // int and char
