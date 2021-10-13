@@ -269,6 +269,7 @@ Arrays.sort(arr, (a, b) -> (a[0] - b[0])); // Lambda expression
 Arrays.sort(arr, (a, b) -> {return a[0] - b[0];}); // Lambda expression using code block
 Arrays.sort(arr, (a, b) -> Integer.compare(a[0], b[0]));
 Arrays.sort(arr, Comparator.comparingInt(a -> a[0])); // define key extractor
+Comparator<int[]> myComparator = (a, b) -> (a[0] - b[0]); Arrays.sort(arr, myComparator);
 
 // The compiler is not able to infer the generic type parameters when adding thenComparing
 // Below are two ways to explicitly specify the type.
