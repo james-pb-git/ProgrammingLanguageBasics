@@ -284,6 +284,7 @@ int[] a = {1,2,3,4,5};
 
 // Array with primitive types to boxed array: (Java8)
 Integer[] boxed = Arrays.stream(a).boxed().toArray(Integer[]::new); // or:
+Integer[] boxed = Arrays.stream(a).boxed().toArray(size -> new Integer[size]); // or:
 Integer[] boxed = IntStream.of(a).boxed().toArray(Integer[]::new); // java.util.stream.IntStream
 
 // Array with primitive types to boxed list (java.util.ArrayList)
