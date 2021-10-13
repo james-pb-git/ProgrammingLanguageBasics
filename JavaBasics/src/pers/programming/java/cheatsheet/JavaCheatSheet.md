@@ -181,6 +181,7 @@ String[] parts = s.split("[:-]"); // {"a", "", "b", "c", "d"}
 parts = str.split("\\t"); // split by tab, represented as "\t";
 parts = str.split("\\n");
 parts = str.split("\\\\"); // split by backslack "\", represented as "\\";
+String[] parts = str.trim().split("[\\t ]+"); // remove leading and trailing whiltespace and split.
 
 // Predefined character classes
 parts = str.split("\\s"); // LOWERCASE s: split by whitespace characters.
