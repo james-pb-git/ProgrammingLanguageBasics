@@ -198,6 +198,11 @@ Read more about regular expressions at [here](https://stackoverflow.com/question
 StringBuilder sb = new StringBuilder();
 StringBuilder sb = new StringBuilder(str);
 
+// Comparison
+// StringBuilder doesn't override Object's equals() method, so it compares the reference by default.
+boolean sameReference = sb1.equals(sb2); // SAME AS sb1 == sb2
+boolean sameString = sb1.toString().equals(sb2.toString());
+
 // Appending
 sb.append(true); // boolean -> "true"
 sb.append('a'); // character -> "a"
