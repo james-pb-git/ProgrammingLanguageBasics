@@ -325,8 +325,10 @@ Note: Collection is an Interface, while Collections is a class providing static 
   - remove: poll() vs remove() (throws exception when empty)
   - get: peek() vs element() (throws exception when empty)
 
-- Deque (extends Queue)
+- Deque (extends Queue, provides stack methods as well)
     - offerFirst(e), offerLast(e), pollFirst(), pollLast(), peekFirst(), peekLast()
+    - Queue: offer(e), poll(), peek()
+    - Stack: push(e), pop(), peek()
 
 - Set: add(ele), contains(obj), remove(obj)
 - SortedSet:
@@ -386,6 +388,11 @@ Deque<String> deque = new ArrayDeque();
 Deque<String> deque = new ArrayDeque(collection); // any implementation of collection.
 // Declare it to be Deque (not List) so methods like peekFirst() are available.
 Deque<String> deque = new LinkedList();
+
+// ArrayDeque is recommended as stack and queue implementations.
+Deque<Integer> stack = new ArrayDeque<>(); // push(e), pop(), peek()
+Deque<Integer> queue = new ArrayDeque<>(); // offer(e), poll(), peek()
+Deque<Integer> deque = new ArrayDeque<>(); // offerFirst(e), pollFirst(), etc.
 ```
 
 **Heap / Priority Queue**
